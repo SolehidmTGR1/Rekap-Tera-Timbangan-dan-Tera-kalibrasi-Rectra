@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDM Group - Riwayat Tera - Final Terkunci</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f2f4f7;margin:0;padding:14px}
+.bagian{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h1{font-size:22px;margin:0 0 4px;text-align:center}
+h2{font-size:18px;margin:0 0 8px}
+h3{font-size:16px;margin:0;color:#0b5cff}
+p{color:#555;margin:4px 0 12px}
+label{display:block;font-size:13px;margin-top:12px;color:#333;font-weight:bold}
+input,select{width:100%;padding:11px;margin-top:4px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+input.no-seri-atas{border:2px solid #0b5cff;background:#eef2ff;font-size:16px;font-weight:bold}
+button{background:#0b5cff;color:#fff;border:0;padding:13px 16px;border-radius:8px;margin-top:10px;cursor:pointer;font-weight:bold;width:100%;font-size:15px}
+button.tombol-kecil{width:100%;padding:11px;margin-top:8px}
+button.tombol-150{background:#0a7a42}
+button.tombol-15{background:#7a3e0a}
+button.tombol-ref{background:#6b21a8}
+button.tombol-edit{background:#f59e0b}
+button.tombol-hapus{background:#dc2626}
+button.tombol-keluar{background:#333}
+button.tombol-batal{background:#999}
+button.tombol-tambah-user{background:#0a7a42}
+button.tombol-lihat{background:#0b5cff}
+button.tombol-kamera{background:#111}
+button.tombol-ambil{background:#0a7a42}
+button.tombol-tutup-kamera{background:#999}
+button.tombol-lanjut{background:#0a7a42}
+button.tombol-menu{background:#fff;color:#0b5cff;border:2px solid #0b5cff}
+button.tombol-menu.aktif{background:#0b5cff;color:#fff}
+button.tombol-tab15{background:#fff;color:#7a3e0a;border:2px solid #7a3e0a}
+button.tombol-tab15.aktif{background:#7a3e0a;color:#fff}
+button.tombol-tab150{background:#fff;color:#0a7a42;border:2px solid #0a7a42}
+button.tombol-tab150.aktif{background:#0a7a42;color:#fff}
+button.tombol-tabref{background:#fff;color:#6b21a8;border:2px solid #6b21a8}
+button.tombol-tabref.aktif{background:#6b21a8;color:#fff}
+.foto-preview{width:100%;max-height:240px;object-fit:cover;border-radius:10px;border:1px solid #ddd;display:none;margin-top:8px}
+.foto-kecil{width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid #ddd;display:block;margin-top:8px;cursor:pointer}
+.video-kamera{width:100%;max-height:280px;border-radius:10px;background:#000;display:none;margin-top:8px}
+.badge{padding:4px 8px;border-radius:20px;font-size:12px;background:#eef2ff;color:#0b5cff;display:inline-block;margin-top:4px}
+.badge.merah{background:#ffe9e9;color:#b00}
+.badge.admin{background:#e6f7e6;color:#0a6b0a}
+.badge.seri{background:#fff3cd;color:#7a3e0a;border:1px solid #ffe08a}
+.badge.merk{background:#e6f7e6;color:#0a6b0a;border:1px solid #b8e6b8}
+.badge.kunci{background:#ffe9e9;color:#b00;border:1px solid #f5b5b5}
+.judul-foto{font-size:14px;color:#0b5cff;font-weight:bold;margin-top:14px}
+.pemisah{background:#eef2ff;padding:10px;border-radius:8px;font-weight:bold;margin-top:16px;text-align:center}
+.seri-bagian{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:12px;background:#fcfcfc}
+.seri-judul{font-size:17px;font-weight:bold;margin:0 0 4px;text-align:center}
+.kartu-tera{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-top:14px;background:#fff}
+.info-tera{font-size:14px;line-height:1.8;margin-top:12px;background:#f8f9fb;padding:12px;border-radius:8px}
+.aksi-bawah{margin-top:12px}
+.aksi-bawah button{margin-top:8px}
+.menu-atas{display:block}
+.menu-atas button{margin-top:8px}
+.kamera-area{border:1px dashed #ccc;border-radius:10px;padding:10px;margin-top:8px;background:#fafafa}
+.kamera-area.terkunci{background:#fff5f5;border:1px solid #f5b5b5}
+.riwayat-otomatis{background:#fffbe6;border:1px solid #ffe08a;border-radius:10px;padding:12px;margin-top:12px;display:none}
+.riwayat-otomatis.baru{background:#eef2ff;border:1px solid #b8c8ff}
+.info-otomatis{background:#e6f7e6;border:1px solid #b8e6b8;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;display:none}
+.info-kunci{background:#ffe9e9;border:1px solid #f5b5b5;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;color:#b00;display:none;font-weight:bold}
+#modalFoto{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;padding:14px}
+#modalFoto img{max-width:100%;max-height:85vh;border-radius:10px}
+#modalFoto button{max-width:220px}
+</style>
+</head>
+<body>
+
+<div id="modalFoto" onclick="tutupModalFoto()">
+<img id="modalFotoImg" src="" alt="Foto Besar">
+<button onclick="tutupModalFoto()">Tutup</button>
+<p style="color:#fff;font-size:13px">Tekan di mana saja untuk tutup</p>
+</div>
+
+<div class="bagian">
+<h1>IDM Group - Riwayat Tera</h1>
+<p style="text-align:center">Final - 3 Report - Timbangan 150 kg, Timbangan 15 kg, Refractometer - Tahun mulai 2026</p>
+<p id="pesan" style="font-size:13px;color:#0b5cff;text-align:center">Silakan login dulu.</p>
+</div>
+
+<div class="bagian" id="halamanLogin">
+<h2>Login - Tabel Pengguna</h2>
+<label>Username</label>
+<input id="usernameLogin" placeholder="Contoh: Soleh">
+<label>Kata Sandi</label>
+<input id="sandiLogin" type="password" placeholder="Kata sandi">
+<button onclick="masukPengguna()">Masuk</button>
+<p style="font-size:12px">Administrator - Username: Soleh, Kata Sandi: IDM</p>
+<p id="pesanLogin" style="font-size:13px;color:#b00"></p>
+</div>
+
+<div id="halamanUtama" style="display:none">
+<div class="bagian">
+<p><span class="badge admin">Sudah Login</span> <b id="namaLogin"></b> - <span id="peranLogin"></span> - <span id="hakLogin" style="font-size:12px"></span></p>
+<button class="tombol-keluar" onclick="keluarPengguna()">Keluar</button>
+</div>
+
+<div class="bagian">
+<h2>Menu</h2>
+<div class="menu-atas">
+<button class="tombol-menu aktif" id="btnMenuInput" onclick="tampilMenu('input')">Form Report Input</button>
+<button class="tombol-menu" id="btnMenuList" onclick="tampilMenu('list')">List Report - 3 Report</button>
+<button class="tombol-menu" id="btnMenuUser" onclick="tampilMenu('user')">Form User</button>
+</div>
+</div>
+
+<div id="menuInput">
+<div class="bagian">
+<h2 id="judulForm">Form Report Input - Tambah Data Tera</h2>
+<input type="hidden" id="idEdit" value="">
+<div style="background:#eef2ff;border:2px solid #0b5cff;border-radius:12px;padding:12px">
+<label style="margin-top:0">1. No Seri - Kunci Utama - Ketik Dulu Di Sini</label>
+<input id="noSeri" class="no-seri-atas" placeholder="Ketik No Seri, contoh REF-001 / 15-001 / 150-001 / 1" oninput="cariNoSeriOtomatis()" autocomplete="off">
+<p style="font-size:12px;margin:6px 0 0">Ketik No Seri, otomatis muncul data lama nya di bawah. Kalau No Seri baru, langsung isi Merk dan Jenis di bawah.</p>
+<button class="tombol-kecil tombol-lanjut" onclick="cariNoSeriOtomatis()">Cek No Seri Ini</button>
+</div>
+<div id="riwayatOtomatis" class="riwayat-otomatis">
+<h3 id="judulRiwayat">Riwayat No Seri Ini</h3>
+<p id="teksRiwayat" style="font-size:13px"></p>
+<div id="isiRiwayat"></div>
+</div>
+<label>Pilih Jenis Alat - 3 Report</label>
+<select id="jenisTimbangan" onchange="gantiLabelJenis()">
+<option value="150 kg">Timbangan 150 kg - Barang Besar</option>
+<option value="15 kg">Timbangan 15 kg - Barang Kecil / Sampel</option>
+<option value="Refractometer">Refractometer - Tera / Kalibrasi</option>
+</select>
+<label id="labelMerk">Merk Timbangan</label>
+<input id="merkTimbangan" placeholder="Contoh: AND, Ohaus, CAS, Nagata - Refractometer contoh: Atago, Hanna">
+<div id="infoMerkOtomatis" class="info-otomatis">Merk otomatis sama dengan Tera Pertama untuk No Seri ini. Merk juga terkunci, tidak bisa dirubah lagi.</div>
+<p style="font-size:12px">Merk akan terisi otomatis kalau No Seri sudah pernah diinput.</p>
+<label id="labelUrutan">Tera Ke Berapa?</label>
+<select id="urutanTera">
+<option value="1">Tera Pertama - Ke 1</option>
+<option value="2">Tera Kedua - Ke 2</option>
+<option value="3">Tera Ketiga - Ke 3</option>
+<option value="4">Tera Ke 4</option>
+<option value="5">Tera Ke 5</option>
+<option value="6">Tera Ke 6</option>
+<option value="7">Tera Ke 7</option>
+<option value="8">Tera Ke 8</option>
+</select>
+<p id="teksLanjut" style="font-size:12px;color:#0a7a42;font-weight:bold"></p>
+<label id="labelTahun">Tahun Tera - Mulai 2026</label>
+<input id="tahunTera" type="number" min="2026" max="2035" value="2026">
+<div class="pemisah" id="labelPemisah">Form Tera - Berlaku untuk Tera Pertama, Kedua, dan seterus nya</div>
+
+<div class="judul-foto" id="labelFotoSertifikat">Foto Sertifikat Tera - Baru - Bisa Dirubah</div>
+<p style="font-size:12px;color:#0a7a42">Untuk Tera Berikut nya, yang dirubah hanya bagian ini + tanggal di bawah.</p>
+<div class="kamera-area">
+<button class="tombol-kamera" onclick="bukaKamera('sertifikat')">Buka Kamera Sertifikat Baru</button>
+<video id="videoSertifikat" class="video-kamera" autoplay playsinline></video>
+<canvas id="canvasSertifikat" style="display:none"></canvas>
+<button class="tombol-ambil" id="btnAmbilSertifikat" style="display:none" onclick="ambilFoto('sertifikat')">Ambil Foto Sertifikat Baru</button>
+<button class="tombol-tutup-kamera" id="btnTutupSertifikat" style="display:none" onclick="tutupKamera('sertifikat')">Tutup Kamera</button>
+<p style="font-size:12px">Atau pilih dari galeri / kamera HP:</p>
+<input id="fotoSertifikatInput" type="file" accept="image/*" capture="environment" onchange="lihatFotoSertifikat(this)">
+<img id="fotoSertifikatPreview" class="foto-preview" alt="Pratinjau sertifikat" onclick="bukaModalFoto(this.src)">
+<button class="tombol-lihat" id="btnViewSertifikatInput" style="display:none" onclick="bukaModalFoto(document.getElementById('fotoSertifikatPreview').src)">View Foto Sertifikat - Full Layar</button>
+</div>
+
+<div class="judul-foto" id="labelFotoAlat">Foto Timbangan / Refractometer - Terkunci Dari Awal</div>
+<div id="infoFotoOtomatis" class="info-otomatis">Foto timbangan sudah otomatis terisi dari Tera Pertama. Pa tinggal isi sertifikat baru + tanggal baru saja.</div>
+<div id="infoFotoKunci" class="info-kunci">Foto ini sudah terkunci dari Tera Pertama. Pakai foto awal ini saja, tidak bisa dirubah lagi untuk Tera Berikut nya.</div>
+<div class="kamera-area" id="areaFotoTimbangan">
+<div id="tombolFotoTimbanganAktif">
+<button class="tombol-kamera" id="btnBukaKameraTimbangan" onclick="bukaKamera('timbangan')">Buka Kamera Alat - Hanya Untuk Input Awal</button>
+<p style="font-size:12px">Hanya untuk No Seri baru / Tera Pertama saja. Kalau No Seri sudah ada, bagian ini akan terkunci otomatis.</p>
+<input id="fotoTimbanganInput" type="file" accept="image/*" capture="environment" onchange="lihatFotoTimbangan(this)">
+</div>
+<div id="tombolFotoTimbanganKunci" style="display:none">
+<p style="font-size:13px;color:#b00;font-weight:bold">Terkunci - Foto awal dipakai terus. Tidak bisa ganti foto lagi.</p>
+</div>
+<video id="videoTimbangan" class="video-kamera" autoplay playsinline></video>
+<canvas id="canvasTimbangan" style="display:none"></canvas>
+<button class="tombol-ambil" id="btnAmbilTimbangan" style="display:none" onclick="ambilFoto('timbangan')">Ambil Foto Alat Baru</button>
+<button class="tombol-tutup-kamera" id="btnTutupTimbangan" style="display:none" onclick="tutupKamera('timbangan')">Tutup Kamera</button>
+<img id="fotoTimbanganPreview" class="foto-preview" alt="Pratinjau alat" onclick="bukaModalFoto(this.src)">
+<button class="tombol-lihat" id="btnViewTimbanganInput" style="display:none" onclick="bukaModalFoto(document.getElementById('fotoTimbanganPreview').src)">View Foto Alat - Full Layar</button>
+</div>
+
+<label id="labelTglTera">Tgl Tera - Baru - Bisa Dirubah</label>
+<input id="tglTera" type="date" min="2026-01-01">
+<label id="labelTglExp">Tgl Exp Tera - Baru - Bisa Dirubah</label>
+<input id="expiredTera" type="date" min="2026-01-01">
+<label>Pencatat</label>
+<input id="pencatat" placeholder="Nama yang menginput">
+<button id="tombolSimpan" onclick="simpanTera()">Simpan Data Tera</button>
+<button id="tombolBatal" class="tombol-batal" onclick="batalEdit()" style="display:none">Batal Edit</button>
+<p id="pesanSimpan" style="font-size:13px;color:#0a7a42"></p>
+</div>
+</div>
+
+<div id="menuList" style="display:none">
+<div class="bagian">
+<h2>List Report - 3 Report</h2>
+<p>Pilih mau lihat yang mana:</p>
+<div class="menu-atas">
+<button class="tombol-tab15 aktif" id="btnList15" onclick="tampilList('15')">List Report Timbangan 15 kg</button>
+<button class="tombol-tab150" id="btnList150" onclick="tampilList('150')">List Report Timbangan 150 kg</button>
+<button class="tombol-tabref" id="btnListRef" onclick="tampilList('ref')">List Report Refractometer - Tera / Kalibrasi</button>
+</div>
+</div>
+
+<div id="list15">
+<div class="bagian">
+<h2>List Report - Timbangan 15 kg</h2>
+<label>Cari No Seri / Merk 15 kg</label>
+<input id="cariSeri15" placeholder="Ketik No Seri atau Merk" oninput="muatTimbangan15()">
+<label>Pilih Tahun Laporan - Mulai 2026</label>
+<select id="filterTahun15" onchange="muatTimbangan15()">
+<option value="">Semua Tahun - Mulai 2026</option>
+<option value="2026">Tahun Tera 2026</option>
+<option value="2027">Tahun Tera 2027</option>
+<option value="2028">Tahun Tera 2028</option>
+<option value="2029">Tahun Tera 2029</option>
+<option value="2030">Tahun Tera 2030</option>
+</select>
+<button class="tombol-kecil tombol-15" onclick="muatTimbangan15()">Muat Ulang 15 kg</button>
+<div id="daftar15">Belum ada data.</div>
+</div>
+</div>
+
+<div id="list150" style="display:none">
+<div class="bagian">
+<h2>List Report - Timbangan 150 kg</h2>
+<label>Cari No Seri / Merk 150 kg</label>
+<input id="cariSeri150" placeholder="Ketik No Seri atau Merk" oninput="muatTimbangan150()">
+<label>Pilih Tahun Laporan - Mulai 2026</label>
+<select id="filterTahun150" onchange="muatTimbangan150()">
+<option value="">Semua Tahun - Mulai 2026</option>
+<option value="2026">Tahun Tera 2026</option>
+<option value="2027">Tahun Tera 2027</option>
+<option value="2028">Tahun Tera 2028</option>
+<option value="2029">Tahun Tera 2029</option>
+<option value="2030">Tahun Tera 2030</option>
+</select>
+<button class="tombol-kecil tombol-150" onclick="muatTimbangan150()">Muat Ulang 150 kg</button>
+<div id="daftar150">Belum ada data.</div>
+</div>
+</div>
+
+<div id="listRef" style="display:none">
+<div class="bagian">
+<h2>List Report - Refractometer - Tera / Kalibrasi</h2>
+<label>Cari No Seri / Merk Refractometer</label>
+<input id="cariSeriRef" placeholder="Ketik No Seri atau Merk, contoh REF-001 atau Atago" oninput="muatRefractometer()">
+<label>Pilih Tahun Tera / Kalibrasi - Mulai 2026</label>
+<select id="filterTahunRef" onchange="muatRefractometer()">
+<option value="">Semua Tahun - Mulai 2026</option>
+<option value="2026">Tahun Tera / Kalibrasi 2026</option>
+<option value="2027">Tahun Tera / Kalibrasi 2027</option>
+<option value="2028">Tahun Tera / Kalibrasi 2028</option>
+<option value="2029">Tahun Tera / Kalibrasi 2029</option>
+<option value="2030">Tahun Tera / Kalibrasi 2030</option>
+</select>
+<button class="tombol-kecil tombol-ref" onclick="muatRefractometer()">Muat Ulang Refractometer</button>
+<div id="daftarRef">Belum ada data.</div>
+</div>
+</div>
+
+<div class="bagian" id="bagianRekap">
+<h2 id="judulRekap">Rekap Per No Seri - Timbangan 15 kg - Mulai 2026</h2>
+<p id="teksRekap" style="font-size:12px">Rekap ini hanya untuk timbangan yang sedang dibuka.</p>
+<button class="tombol-kecil" onclick="muatRekap()">Muat Rekap</button>
+<div id="daftarRekap">Belum ada data.</div>
+</div>
+</div>
+
+<div id="menuUser" style="display:none">
+<div class="bagian">
+<h2>Form User - Tambah Pengguna Baru + Hak Akses</h2>
+<label>Username Baru</label>
+<input id="usernameBaru" placeholder="Contoh: Budi">
+<label>Kata Sandi Baru</label>
+<input id="sandiBaru" placeholder="Kata sandi baru">
+<label>Nama Lengkap</label>
+<input id="namaBaru" placeholder="Contoh: Budi Santoso">
+<label>Peran</label>
+<select id="peranBaru">
+<option value="staf">Staf</option>
+<option value="administrator">Administrator</option>
+</select>
+<label>Hak Akses</label>
+<div style="font-size:14px;line-height:2.2">
+<input type="checkbox" id="hakLihat" checked style="width:auto"> Bisa Lihat<br>
+<input type="checkbox" id="hakInput" checked style="width:auto"> Bisa Input<br>
+<input type="checkbox" id="hakEdit" checked style="width:auto"> Bisa Edit<br>
+<input type="checkbox" id="hakHapus" style="width:auto"> Bisa Hapus<br>
+<input type="checkbox" id="hakTambahUser" style="width:auto"> Bisa Tambah User<br>
+</div>
+<button class="tombol-tambah-user" onclick="tambahPengguna()">Tambah Pengguna</button>
+<div id="daftarPengguna" style="margin-top:12px">Belum ada data.</div>
+<button class="tombol-kecil" onclick="muatPengguna()">Muat Ulang Daftar Pengguna</button>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const URL_SUPABASE_TETAP = "https://vgbsmgosfsyfkakujivi.supabase.co";
+const KUNCI_SUPABASE_TETAP = "sb_publishable_JvitPU-hTYtQ8b5czZ6p7g__gAs4z9o";
+let klien = window.supabase.createClient(URL_SUPABASE_TETAP, KUNCI_SUPABASE_TETAP);
+let berkasSertifikat = null;
+let berkasTimbangan = null;
+let fotoTimbanganOtomatis = '';
+let fotoTimbanganTerkunci = false;
+let merkOtomatis = '';
+let penggunaAktif = null;
+let dataSemua = [];
+const TAHUN_AWAL = 2026;
+let bisaEdit = false;
+let bisaHapus = false;
+let bisaInput = false;
+let bisaTambahUser = false;
+let streamSertifikat = null;
+let streamTimbangan = null;
+let timerCariNoSeri = null;
+let kategoriListAktif = '15 kg';
+
+function kunciFotoTimbangan(aktif, noSeri, merk){
+  fotoTimbanganTerkunci = aktif;
+  if(aktif){
+    document.getElementById('tombolFotoTimbanganAktif').style.display = 'none';
+    document.getElementById('tombolFotoTimbanganKunci').style.display = 'block';
+    document.getElementById('infoFotoKunci').style.display = 'block';
+    document.getElementById('areaFotoTimbangan').classList.add('terkunci');
+    document.getElementById('infoFotoKunci').innerText = 'Foto ini sudah terkunci dari Tera Pertama - No Seri ' + noSeri + ' - Merk ' + merk + '. Pakai foto awal ini saja, tidak bisa dirubah lagi untuk Tera Berikut nya.';
+    berkasTimbangan = null;
+    tutupKamera('timbangan');
+  } else {
+    document.getElementById('tombolFotoTimbanganAktif').style.display = 'block';
+    document.getElementById('tombolFotoTimbanganKunci').style.display = 'none';
+    document.getElementById('infoFotoKunci').style.display = 'none';
+    document.getElementById('areaFotoTimbangan').classList.remove('terkunci');
+  }
+}
+
+async function cariNoSeriOtomatis(){
+  const noSeri = document.getElementById('noSeri').value.trim();
+  const box = document.getElementById('riwayatOtomatis');
+  if(!noSeri || noSeri.length < 1){ box.style.display = 'none'; return; }
+  if(document.getElementById('idEdit').value){ return; }
+  if(timerCariNoSeri) clearTimeout(timerCariNoSeri);
+  timerCariNoSeri = setTimeout(async function(){
+    const hasil = await klien.from('tera_timbangan').select('*').eq('no_seri', noSeri).order('urutan_tera', {ascending:true});
+    if(hasil.error || !hasil.data || hasil.data.length === 0){
+      box.style.display = 'block';
+      box.classList.add('baru');
+      document.getElementById('judulRiwayat').innerText = 'No Seri Baru - ' + noSeri;
+      document.getElementById('teksRiwayat').innerText = 'No Seri ini belum pernah diinput. Ini akan jadi Tera Pertama. Silakan isi Merk, Jenis, foto timbangan / refractometer, dan foto sertifikat nya di bawah.';
+      document.getElementById('isiRiwayat').innerHTML = '';
+      document.getElementById('urutanTera').value = '1';
+      document.getElementById('teksLanjut').innerText = '';
+      fotoTimbanganOtomatis = '';
+      merkOtomatis = '';
+      document.getElementById('infoMerkOtomatis').style.display = 'none';
+      document.getElementById('infoFotoOtomatis').style.display = 'none';
+      document.getElementById('fotoTimbanganPreview').style.display = 'none';
+      document.getElementById('btnViewTimbanganInput').style.display = 'none';
+      document.getElementById('merkTimbangan').readOnly = false;
+      kunciFotoTimbangan(false, '', '');
+      return;
+    }
+    box.style.display = 'block';
+    box.classList.remove('baru');
+    const dataLama = hasil.data;
+    const pertama = dataLama[0];
+    const terakhir = dataLama[dataLama.length - 1];
+    merkOtomatis = pertama.merk_timbangan || '';
+    document.getElementById('merkTimbangan').value = merkOtomatis;
+    document.getElementById('merkTimbangan').readOnly = true;
+    document.getElementById('jenisTimbangan').value = pertama.jenis_timbangan;
+    gantiLabelJenis();
+    document.getElementById('infoMerkOtomatis').style.display = 'block';
+    fotoTimbanganOtomatis = pertama.foto_timbangan_url || terakhir.foto_timbangan_url || '';
+    if(fotoTimbanganOtomatis){
+      const img = document.getElementById('fotoTimbanganPreview');
+      img.src = fotoTimbanganOtomatis;
+      img.style.display = 'block';
+      document.getElementById('btnViewTimbanganInput').style.display = 'block';
+      document.getElementById('infoFotoOtomatis').style.display = 'block';
+      document.getElementById('infoFotoOtomatis').innerText = 'Foto timbangan / refractometer sudah otomatis terisi dari Tera Pertama - No Seri ' + noSeri + ' - Merk ' + merkOtomatis + '. Foto ini terkunci, pakai foto awal ini saja.';
+      kunciFotoTimbangan(true, noSeri, merkOtomatis);
+    }
+    berkasSertifikat = null;
+    document.getElementById('fotoSertifikatPreview').style.display = 'none';
+    document.getElementById('btnViewSertifikatInput').style.display = 'none';
+    document.getElementById('tglTera').value = '';
+    document.getElementById('expiredTera').value = '';
+    const maxUrutan = Math.max.apply(null, dataLama.map(function(x){ return x.urutan_tera || 0; }));
+    const lanjut = maxUrutan + 1;
+    if(lanjut <= 8){
+      document.getElementById('urutanTera').value = String(lanjut);
+      document.getElementById('teksLanjut').innerText = 'Sudah ada sampai Tera Ke ' + maxUrutan + '. Sekarang lanjut otomatis ke Tera Ke ' + lanjut + '. Yang dirubah hanya sertifikat baru + Tgl Tera baru + Tgl Exp baru saja. Merk dan foto alat terkunci, pakai yang awal.';
+    }
+    const suf = pertama.jenis_timbangan === 'Refractometer' ? ' / Kalibrasi' : '';
+    document.getElementById('judulRiwayat').innerText = 'Ditemukan - No Seri ' + noSeri + ' - ' + pertama.jenis_timbangan + ' - Merk ' + (pertama.merk_timbangan || '-');
+    document.getElementById('teksRiwayat').innerText = 'Sudah ada ' + dataLama.length + ' tera untuk No Seri ini. Foto alat nya terkunci dari awal, tidak bisa dirubah lagi.';
+    let isi = '';
+    dataLama.forEach(function(item){
+      isi += '<div class="kartu-tera" style="margin-top:10px"><b>' + namaUrutan(item.urutan_tera, item.jenis_timbangan) + ' - Tahun ' + item.tahun_tera + '</b><br>';
+      isi += '<small>Tgl Tera' + suf + ': ' + (item.tgl_tera || '-') + ' | Exp: ' + (item.expired_tera || '-') + '</small>';
+      isi += '<div class="judul-foto" style="font-size:12px">Foto Sertifikat - ' + namaUrutan(item.urutan_tera, item.jenis_timbangan) + ' - Baru Tiap Tera</div>';
+      if(item.foto_sertifikat_url){ isi += '<img class="foto-kecil" src="' + item.foto_sertifikat_url + '" onclick="bukaModalFoto(\'' + item.foto_sertifikat_url + '\')">'; } else { isi += '<small>Belum ada foto sertifikat</small>'; }
+      isi += '<div class="judul-foto" style="font-size:12px">Foto Alat - ' + namaUrutan(item.urutan_tera, item.jenis_timbangan) + ' - Sama / Terkunci</div>';
+      if(item.foto_timbangan_url){ isi += '<img class="foto-kecil" src="' + item.foto_timbangan_url + '" onclick="bukaModalFoto(\'' + item.foto_timbangan_url + '\')">'; } else { isi += '<small>Belum ada foto alat</small>'; }
+      isi += '</div>';
+    });
+    document.getElementById('isiRiwayat').innerHTML = isi;
+  }, 400);
+}
+
+function gantiLabelJenis(){
+  const jenis = document.getElementById('jenisTimbangan').value;
+  const ref = jenis === 'Refractometer';
+  const suf = ref ? ' / Kalibrasi' : '';
+  document.getElementById('labelMerk').innerText = ref ? 'Merk Refractometer - Terkunci Kalau Sudah Ada' : 'Merk Timbangan - Terkunci Kalau Sudah Ada';
+  document.getElementById('labelUrutan').innerText = 'Tera' + suf + ' Ke Berapa?';
+  document.getElementById('labelTahun').innerText = 'Tahun Tera' + suf + ' - Mulai 2026';
+  document.getElementById('labelPemisah').innerText = 'Form Tera' + suf + ' - Berlaku untuk Tera' + suf + ' Pertama, Kedua, dan seterus nya';
+  document.getElementById('labelFotoSertifikat').innerText = 'Foto Sertifikat Tera' + suf + ' - Baru - Bisa Dirubah';
+  document.getElementById('labelFotoAlat').innerText = ref ? 'Foto Refractometer - Terkunci Dari Awal' : 'Foto Timbangan - Terkunci Dari Awal';
+  document.getElementById('labelTglTera').innerText = 'Tgl Tera' + suf + ' - Baru - Bisa Dirubah';
+  document.getElementById('labelTglExp').innerText = 'Tgl Exp Tera' + suf + ' - Baru - Bisa Dirubah';
+  const urutan = document.getElementById('urutanTera');
+  for(let i=0;i<urutan.options.length;i++){
+    const n = i+1;
+    let nama = '';
+    if(n==1) nama = 'Tera' + suf + ' Pertama - Ke 1';
+    else if(n==2) nama = 'Tera' + suf + ' Kedua - Ke 2';
+    else if(n==3) nama = 'Tera' + suf + ' Ketiga - Ke 3';
+    else nama = 'Tera' + suf + ' Ke ' + n;
+    urutan.options[i].text = nama;
+  }
+}
+function bukaModalFoto(url){
+  if(!url) return;
+  document.getElementById('modalFotoImg').src = url;
+  document.getElementById('modalFoto').style.display = 'flex';
+}
+function tutupModalFoto(){ document.getElementById('modalFoto').style.display = 'none'; }
+async function bukaKamera(jenis){
+  if(jenis === 'timbangan' && fotoTimbanganTerkunci){
+    alert('Foto timbangan / refractometer sudah terkunci dari Tera Pertama. Pakai foto awal saja, tidak bisa dirubah lagi.');
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    if(jenis === 'sertifikat'){
+      streamSertifikat = stream;
+      const v = document.getElementById('videoSertifikat'); v.srcObject = stream; v.style.display = 'block';
+      document.getElementById('btnAmbilSertifikat').style.display = 'block';
+      document.getElementById('btnTutupSertifikat').style.display = 'block';
+    } else {
+      streamTimbangan = stream;
+      const v = document.getElementById('videoTimbangan'); v.srcObject = stream; v.style.display = 'block';
+      document.getElementById('btnAmbilTimbangan').style.display = 'block';
+      document.getElementById('btnTutupTimbangan').style.display = 'block';
+    }
+  } catch(e){ alert('Kamera tidak bisa dibuka dari web ini. Pakai tombol Pilih File di bawah nya. Pesan: ' + e.message); }
+}
+function tutupKamera(jenis){
+  if(jenis === 'sertifikat'){
+    if(streamSertifikat){ streamSertifikat.getTracks().forEach(function(t){ t.stop(); }); streamSertifikat = null; }
+    document.getElementById('videoSertifikat').style.display = 'none';
+    document.getElementById('btnAmbilSertifikat').style.display = 'none';
+    document.getElementById('btnTutupSertifikat').style.display = 'none';
+  } else {
+    if(streamTimbangan){ streamTimbangan.getTracks().forEach(function(t){ t.stop(); }); streamTimbangan = null; }
+    document.getElementById('videoTimbangan').style.display = 'none';
+    document.getElementById('btnAmbilTimbangan').style.display = 'none';
+    document.getElementById('btnTutupTimbangan').style.display = 'none';
+  }
+}
+function ambilFoto(jenis){
+  if(jenis === 'timbangan' && fotoTimbanganTerkunci){
+    alert('Foto timbangan / refractometer sudah terkunci dari Tera Pertama. Pakai foto awal saja.');
+    return;
+  }
+  if(jenis === 'sertifikat'){
+    const v = document.getElementById('videoSertifikat');
+    const c = document.getElementById('canvasSertifikat');
+    c.width = v.videoWidth; c.height = v.videoHeight;
+    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+    c.toBlob(function(blob){
+      berkasSertifikat = new File([blob], 'sertifikat-' + Date.now() + '.jpg', { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      const img = document.getElementById('fotoSertifikatPreview'); img.src = url; img.style.display = 'block';
+      document.getElementById('btnViewSertifikatInput').style.display = 'block';
+      tutupKamera('sertifikat');
+    }, 'image/jpeg', 0.9);
+  } else {
+    const v = document.getElementById('videoTimbangan');
+    const c = document.getElementById('canvasTimbangan');
+    c.width = v.videoWidth; c.height = v.videoHeight;
+    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+    c.toBlob(function(blob){
+      berkasTimbangan = new File([blob], 'alat-' + Date.now() + '.jpg', { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      const img = document.getElementById('fotoTimbanganPreview'); img.src = url; img.style.display = 'block';
+      document.getElementById('btnViewTimbanganInput').style.display = 'block';
+      tutupKamera('timbangan');
+    }, 'image/jpeg', 0.9);
+  }
+}
+function tampilMenu(nama){
+  document.getElementById('menuInput').style.display = nama === 'input' ? 'block' : 'none';
+  document.getElementById('menuList').style.display = nama === 'list' ? 'block' : 'none';
+  document.getElementById('menuUser').style.display = nama === 'user' ? 'block' : 'none';
+  document.getElementById('btnMenuInput').classList.toggle('aktif', nama === 'input');
+  document.getElementById('btnMenuList').classList.toggle('aktif', nama === 'list');
+  document.getElementById('btnMenuUser').classList.toggle('aktif', nama === 'user');
+  if(nama === 'list'){ tampilList('15'); }
+  if(nama === 'user'){ muatPengguna(); }
+}
+function tampilList(jenis){
+  document.getElementById('list15').style.display = jenis === '15' ? 'block' : 'none';
+  document.getElementById('list150').style.display = jenis === '150' ? 'block' : 'none';
+  document.getElementById('listRef').style.display = jenis === 'ref' ? 'block' : 'none';
+  document.getElementById('btnList15').classList.toggle('aktif', jenis === '15');
+  document.getElementById('btnList150').classList.toggle('aktif', jenis === '150');
+  document.getElementById('btnListRef').classList.toggle('aktif', jenis === 'ref');
+  if(jenis === '15'){
+    kategoriListAktif = '15 kg';
+    document.getElementById('bagianRekap').style.display = 'block';
+    document.getElementById('judulRekap').innerText = 'Rekap Per No Seri - Timbangan 15 kg - Mulai 2026';
+    document.getElementById('teksRekap').innerText = 'Rekap ini hanya untuk Timbangan 15 kg yang sedang dibuka.';
+    muatTimbangan15(); muatRekap();
+  }
+  if(jenis === '150'){
+    kategoriListAktif = '150 kg';
+    document.getElementById('bagianRekap').style.display = 'block';
+    document.getElementById('judulRekap').innerText = 'Rekap Per No Seri - Timbangan 150 kg - Mulai 2026';
+    document.getElementById('teksRekap').innerText = 'Rekap ini hanya untuk Timbangan 150 kg yang sedang dibuka.';
+    muatTimbangan150(); muatRekap();
+  }
+  if(jenis === 'ref'){
+    kategoriListAktif = 'Refractometer';
+    document.getElementById('bagianRekap').style.display = 'none';
+    muatRefractometer();
+  }
+}
+async function masukPengguna(){
+  const username = document.getElementById('usernameLogin').value.trim();
+  const sandi = document.getElementById('sandiLogin').value;
+  if(!username || !sandi){ document.getElementById('pesanLogin').innerText = 'Isi username dan kata sandi dulu.'; return; }
+  const hasil = await klien.from('pengguna').select('*').eq('username', username).eq('kata_sandi', sandi).single();
+  if(hasil.error || !hasil.data){ document.getElementById('pesanLogin').innerText = 'Username atau kata sandi salah.'; return; }
+  penggunaAktif = hasil.data;
+  bisaEdit = penggunaAktif.bisa_edit !== false;
+  bisaHapus = penggunaAktif.bisa_hapus === true;
+  bisaInput = penggunaAktif.bisa_input !== false;
+  bisaTambahUser = penggunaAktif.bisa_tambah_user === true;
+  document.getElementById('namaLogin').innerText = penggunaAktif.nama || penggunaAktif.username;
+  document.getElementById('peranLogin').innerText = penggunaAktif.peran;
+  let hakTeks = [];
+  if(bisaInput) hakTeks.push('Input');
+  if(bisaEdit) hakTeks.push('Edit');
+  if(bisaHapus) hakTeks.push('Hapus');
+  if(bisaTambahUser) hakTeks.push('Tambah User');
+  document.getElementById('hakLogin').innerText = 'Hak: ' + hakTeks.join(', ');
+  document.getElementById('pencatat').value = penggunaAktif.nama || '';
+  document.getElementById('pesan').innerText = 'Login berhasil. Selamat datang, ' + (penggunaAktif.nama || penggunaAktif.username);
+  document.getElementById('halamanLogin').style.display = 'none';
+  document.getElementById('halamanUtama').style.display = 'block';
+  if(!bisaTambahUser){ document.getElementById('btnMenuUser').style.display = 'none'; } else { document.getElementById('btnMenuUser').style.display = 'block'; }
+  if(!bisaInput){ document.getElementById('btnMenuInput').style.display = 'none'; } else { document.getElementById('btnMenuInput').style.display = 'block'; }
+  tampilMenu('input');
+}
+function keluarPengguna(){
+  penggunaAktif = null; bisaEdit=false; bisaHapus=false; bisaInput=false; bisaTambahUser=false;
+  tutupKamera('sertifikat'); tutupKamera('timbangan');
+  document.getElementById('halamanUtama').style.display = 'none';
+  document.getElementById('halamanLogin').style.display = 'block';
+  document.getElementById('pesan').innerText = 'Sudah keluar. Silakan login dulu.';
+  document.getElementById('usernameLogin').value = ''; document.getElementById('sandiLogin').value = '';
+  document.getElementById('pesanLogin').innerText = '';
+}
+async function tambahPengguna(){
+  if(!bisaTambahUser){ alert('Pa tidak punya hak tambah user.'); return; }
+  const data = { username: document.getElementById('usernameBaru').value.trim(), kata_sandi: document.getElementById('sandiBaru').value, nama: document.getElementById('namaBaru').value, peran: document.getElementById('peranBaru').value, bisa_lihat: document.getElementById('hakLihat').checked, bisa_input: document.getElementById('hakInput').checked, bisa_edit: document.getElementById('hakEdit').checked, bisa_hapus: document.getElementById('hakHapus').checked, bisa_tambah_user: document.getElementById('hakTambahUser').checked };
+  if(!data.username || !data.kata_sandi){ alert('Isi username dan kata sandi dulu'); return; }
+  const hasil = await klien.from('pengguna').insert([data]);
+  if(hasil.error){ alert(hasil.error.message); return; }
+  alert('Pengguna baru tersimpan'); muatPengguna();
+}
+async function muatPengguna(){
+  if(!bisaTambahUser) return;
+  const hasil = await klien.from('pengguna').select('*').order('id', {ascending:true});
+  if(hasil.error){ document.getElementById('daftarPengguna').innerText = hasil.error.message; return; }
+  if(!hasil.data || hasil.data.length === 0){ document.getElementById('daftarPengguna').innerText = 'Belum ada data.'; return; }
+  let isi = '';
+  hasil.data.forEach(function(item){
+    isi += '<div class="kartu-tera"><b>'+item.username+'</b><br>Nama: '+(item.nama||'')+'<br>Peran: '+item.peran+'<br>Hak - Lihat: '+(item.bisa_lihat?'Ya':'Tidak')+' | Input: '+(item.bisa_input?'Ya':'Tidak')+' | Edit: '+(item.bisa_edit?'Ya':'Tidak')+' | Hapus: '+(item.bisa_hapus?'Ya':'Tidak')+'<br><button class="tombol-hapus" onclick="hapusPengguna('+item.id+')">Hapus User</button></div>';
+  });
+  document.getElementById('daftarPengguna').innerHTML = isi;
+}
+async function hapusPengguna(id){
+  if(!bisaTambahUser) return;
+  if(!confirm('Yakin hapus user ini?')) return;
+  const hasil = await klien.from('pengguna').delete().eq('id', id);
+  if(hasil.error){ alert(hasil.error.message); return; }
+  alert('User dihapus'); muatPengguna();
+}
+function lihatFotoSertifikat(input){
+  berkasSertifikat = input.files[0]; if(!berkasSertifikat) return;
+  const baca = new FileReader();
+  baca.onload = function(e){ const img = document.getElementById('fotoSertifikatPreview'); img.src = e.target.result; img.style.display = 'block'; document.getElementById('btnViewSertifikatInput').style.display = 'block'; };
+  baca.readAsDataURL(berkasSertifikat);
+}
+function lihatFotoTimbangan(input){
+  if(fotoTimbanganTerkunci){
+    alert('Foto timbangan / refractometer sudah terkunci dari Tera Pertama. Pakai foto awal saja, tidak bisa dirubah lagi.');
+    input.value = '';
+    return;
+  }
+  berkasTimbangan = input.files[0]; if(!berkasTimbangan) return;
+  const baca = new FileReader();
+  baca.onload = function(e){ const img = document.getElementById('fotoTimbanganPreview'); img.src = e.target.result; img.style.display = 'block'; document.getElementById('btnViewTimbanganInput').style.display = 'block'; };
+  baca.readAsDataURL(berkasTimbangan);
+}
+async function unggahSatu(berkas){
+  if(!berkas) return '';
+  const namaBerkas = Date.now() + '-' + berkas.name.replace(/\s/g,'-');
+  const hasil = await klien.storage.from('foto-timbangan').upload(namaBerkas, berkas);
+  if(hasil.error){ alert(hasil.error.message); return ''; }
+  const urlData = klien.storage.from('foto-timbangan').getPublicUrl(namaBerkas);
+  return urlData.data.publicUrl;
+}
+async function simpanTera(){
+  if(!bisaInput && !document.getElementById('idEdit').value){ alert('Pa tidak punya hak input.'); return; }
+  const noSeriIsi = document.getElementById('noSeri').value.trim();
+  if(!noSeriIsi){ alert('Isi No Seri dulu di paling atas.'); return; }
+  const tahunIsi = parseInt(document.getElementById('tahunTera').value);
+  if(!tahunIsi || tahunIsi < TAHUN_AWAL){ alert('Tahun tera dimulai dari 2026 saja.'); return; }
+  const tglIsi = document.getElementById('tglTera').value;
+  if(tglIsi && tglIsi < '2026-01-01'){ alert('Tgl Tera dimulai dari 2026 saja.'); return; }
+  const expIsi = document.getElementById('expiredTera').value;
+  if(tglIsi && expIsi && expIsi < tglIsi){ alert('Tgl Exp harus setelah Tgl Tera.'); return; }
+  document.getElementById('pesanSimpan').innerText = 'Sedang menyimpan, mohon tunggu...';
+  let urlSertifikat = ''; let urlTimbangan = '';
+  if(berkasSertifikat) urlSertifikat = await unggahSatu(berkasSertifikat);
+  if(fotoTimbanganTerkunci){
+    urlTimbangan = fotoTimbanganOtomatis;
+  } else if(berkasTimbangan) {
+    urlTimbangan = await unggahSatu(berkasTimbangan);
+  } else if(fotoTimbanganOtomatis) {
+    urlTimbangan = fotoTimbanganOtomatis;
+  }
+  const idEdit = document.getElementById('idEdit').value;
+  const dataLengkap = { jenis_timbangan: document.getElementById('jenisTimbangan').value, no_seri: noSeriIsi, merk_timbangan: document.getElementById('merkTimbangan').value.trim() || merkOtomatis, urutan_tera: parseInt(document.getElementById('urutanTera').value), tahun_tera: tahunIsi, tgl_tera: tglIsi || null, expired_tera: expIsi || null, pencatat: document.getElementById('pencatat').value };
+  if(urlSertifikat) dataLengkap.foto_sertifikat_url = urlSertifikat;
+  if(urlTimbangan) dataLengkap.foto_timbangan_url = urlTimbangan;
+  let hasil;
+  if(idEdit){ hasil = await klien.from('tera_timbangan').update(dataLengkap).eq('id', idEdit); }
+  else { hasil = await klien.from('tera_timbangan').insert([dataLengkap]); }
+  if(hasil.error){
+    if(hasil.error.message.includes('uniq_tera_satu') || hasil.error.message.includes('duplicate')){
+      alert('No Seri ' + noSeriIsi + ' sudah ada Tera Ke ' + dataLengkap.urutan_tera + ' Tahun ' + tahunIsi + '. Pa tinggal lanjutkan ke Tera berikut nya saja.');
+    } else { alert(hasil.error.message); }
+    document.getElementById('pesanSimpan').innerText=''; return;
+  }
+  alert(idEdit ? 'Data berhasil di edit' : 'Data tera tersimpan - No Seri ' + noSeriIsi + ' - Foto alat terkunci dari awal, sertifikat baru tersimpan');
+  batalEdit(); tampilMenu('list');
+}
+function batalEdit(){
+  document.getElementById('idEdit').value = '';
+  document.getElementById('judulForm').innerText = 'Form Report Input - Tambah Data Tera';
+  document.getElementById('tombolSimpan').innerText = 'Simpan Data Tera';
+  document.getElementById('tombolBatal').style.display = 'none';
+  document.getElementById('noSeri').value = ''; document.getElementById('merkTimbangan').value = ''; document.getElementById('tglTera').value = ''; document.getElementById('expiredTera').value = '';
+  document.getElementById('merkTimbangan').readOnly = false;
+  document.getElementById('tahunTera').value = '2026';
+  document.getElementById('fotoSertifikatPreview').style.display = 'none'; document.getElementById('fotoTimbanganPreview').style.display = 'none';
+  document.getElementById('btnViewSertifikatInput').style.display = 'none'; document.getElementById('btnViewTimbanganInput').style.display = 'none';
+  document.getElementById('riwayatOtomatis').style.display = 'none';
+  document.getElementById('infoMerkOtomatis').style.display = 'none';
+  document.getElementById('infoFotoOtomatis').style.display = 'none';
+  document.getElementById('teksLanjut').innerText = '';
+  berkasSertifikat = null; berkasTimbangan = null; fotoTimbanganOtomatis = ''; fotoTimbanganTerkunci = false; merkOtomatis = '';
+  kunciFotoTimbangan(false, '', '');
+  document.getElementById('pesanSimpan').innerText='';
+  tutupKamera('sertifikat'); tutupKamera('timbangan');
+  gantiLabelJenis();
+}
+function mulaiEdit(id){
+  if(!bisaEdit){ alert('Pa tidak punya hak edit.'); return; }
+  const item = dataSemua.find(function(x){ return x.id == id; }); if(!item) return;
+  tampilMenu('input');
+  document.getElementById('idEdit').value = item.id;
+  const sufEdit = item.jenis_timbangan === 'Refractometer' ? ' / Kalibrasi' : '';
+  document.getElementById('judulForm').innerText = 'Edit Data Tera' + sufEdit + ' - ' + item.jenis_timbangan + ' - No Seri ' + (item.no_seri || '');
+  document.getElementById('tombolSimpan').innerText = 'Simpan Perubahan';
+  document.getElementById('tombolBatal').style.display = 'block';
+  document.getElementById('jenisTimbangan').value = item.jenis_timbangan;
+  gantiLabelJenis();
+  document.getElementById('noSeri').value = item.no_seri || '';
+  document.getElementById('merkTimbangan').value = item.merk_timbangan || '';
+  document.getElementById('urutanTera').value = item.urutan_tera;
+  document.getElementById('tahunTera').value = item.tahun_tera;
+  document.getElementById('tglTera').value = item.tgl_tera || '';
+  document.getElementById('expiredTera').value = item.expired_tera || '';
+  document.getElementById('pencatat').value = item.pencatat || '';
+  if(item.foto_sertifikat_url){ const img = document.getElementById('fotoSertifikatPreview'); img.src = item.foto_sertifikat_url; img.style.display = 'block'; document.getElementById('btnViewSertifikatInput').style.display = 'block'; }
+  if(item.foto_timbangan_url){ const img = document.getElementById('fotoTimbanganPreview'); img.src = item.foto_timbangan_url; img.style.display = 'block'; document.getElementById('btnViewTimbanganInput').style.display = 'block'; fotoTimbanganOtomatis = item.foto_timbangan_url; }
+  if(item.urutan_tera > 1){
+    kunciFotoTimbangan(true, item.no_seri, item.merk_timbangan);
+    document.getElementById('merkTimbangan').readOnly = true;
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+  alert('Mode edit aktif. Untuk Tera Ke 2 ke atas, foto alat terkunci, yang bisa dirubah hanya sertifikat + tanggal saja.');
+}
+async function hapusTera(id){
+  if(!bisaHapus){ alert('Pa tidak punya hak hapus. Hanya Soleh yang bisa hapus.'); return; }
+  if(!confirm('Yakin mau hapus data ini?')) return;
+  const hasil = await klien.from('tera_timbangan').delete().eq('id', id);
+  if(hasil.error){ alert(hasil.error.message); return; }
+  alert('Data berhasil dihapus'); muatTimbangan150(); muatTimbangan15(); muatRefractometer(); muatRekap();
+}
+function labelTera(expired, jenis){
+  const suf = jenis === 'Refractometer' ? ' / Kalibrasi' : '';
+  if(!expired) return '<span class="badge">Belum diisi</span>';
+  const hariIni = new Date(); const tglExp = new Date(expired);
+  const selisih = Math.ceil((tglExp - hariIni) / (1000*60*60*24));
+  if(selisih < 0) return '<span class="badge merah">Tera' + suf + ' Habis</span>';
+  if(selisih <= 30) return '<span class="badge merah">Habis dalam '+selisih+' hari</span>';
+  return '<span class="badge">Masih berlaku</span>';
+}
+function namaUrutan(n, jenis){
+  const suf = jenis === 'Refractometer' ? ' / Kalibrasi' : '';
+  if(n==1) return 'Tera' + suf + ' Pertama';
+  if(n==2) return 'Tera' + suf + ' Kedua';
+  if(n==3) return 'Tera' + suf + ' Ketiga';
+  return 'Tera' + suf + ' Ke '+n;
+}
+function tombolLihat(url, label){
+  if(!url) return '<small style="color:#999">Belum ada foto</small>';
+  const urlAman = url.replace(/'/g, '');
+  return '<button class="tombol-lihat" onclick="bukaModalFoto(\''+urlAman+'\')">View '+label+' - Full Layar</button><img class="foto-kecil" src="'+url+'" onclick="bukaModalFoto(\''+urlAman+'\')">';
+}
+async function muatSatuTimbangan(jenis, filterId, cariId, targetId, labelAlat){
+  let query = klien.from('tera_timbangan').select('*').eq('jenis_timbangan', jenis).gte('tahun_tera', TAHUN_AWAL);
+  const tahunPilih = document.getElementById(filterId).value;
+  if(tahunPilih){ query = query.eq('tahun_tera', parseInt(tahunPilih)); }
+  const hasil = await query.order('no_seri', {ascending:true}).order('urutan_tera', {ascending:true});
+  if(hasil.error){ document.getElementById(targetId).innerText = hasil.error.message; return; }
+  if(!hasil.data || hasil.data.length === 0){ document.getElementById(targetId).innerText = 'Belum ada data mulai 2026.'; return; }
+  let dataFilter = hasil.data;
+  const cari = document.getElementById(cariId).value.trim().toLowerCase();
+  if(cari){ dataFilter = dataFilter.filter(function(x){ return ((x.no_seri||'').toLowerCase().includes(cari) || (x.merk_timbangan||'').toLowerCase().includes(cari)); }); }
+  if(dataFilter.length === 0){ document.getElementById(targetId).innerText = 'Tidak ditemukan untuk No Seri / Merk tersebut.'; return; }
+  dataFilter.forEach(function(item){
+    const sudahAda = dataSemua.find(function(x){ return x.id == item.id; });
+    if(!sudahAda) dataSemua.push(item);
+  });
+  let kelompok = {};
+  dataFilter.forEach(function(item){
+    const seri = item.no_seri || 'Tanpa No Seri';
+    const merk = item.merk_timbangan || 'Tanpa Merk';
+    const kunci = seri + ' | ' + merk;
+    if(!kelompok[kunci]) kelompok[kunci] = [];
+    kelompok[kunci].push(item);
+  });
+  const suf = jenis === 'Refractometer' ? ' / Kalibrasi' : '';
+  let isi = '';
+  for(const kunci in kelompok){
+    const pisah = kunci.split(' | ');
+    isi += '<div class="seri-bagian"><p class="seri-judul">'+jenis+' - No Seri: '+pisah[0]+'</p><p style="text-align:center;margin:0"><span class="badge merk">Merk: '+pisah[1]+'</span> <span class="badge seri">Jumlah Tera'+suf+': '+kelompok[kunci].length+' kali</span></p>';
+    isi += '<button class="tombol-lanjut" onclick="lanjutTeraDariList(\''+pisah[0]+'\')">Lanjutkan Tera Untuk No Seri '+pisah[0]+'</button>';
+    kelompok[kunci].forEach(function(item){
+      isi += '<div class="kartu-tera"><h3>'+namaUrutan(item.urutan_tera, jenis)+' - Tahun '+item.tahun_tera+'</h3>';
+      isi += '<div class="judul-foto">Foto Sertifikat Tera'+suf+' - Baru Tiap Tera</div>'+tombolLihat(item.foto_sertifikat_url, 'Sertifikat');
+      isi += '<div class="judul-foto">Foto '+labelAlat+' - Sama / Terkunci Dari Awal</div>'+tombolLihat(item.foto_timbangan_url, labelAlat);
+      isi += '<div class="info-tera"><b>No Seri: '+(item.no_seri||'-')+'</b><br><b>Merk: '+(item.merk_timbangan||'-')+'</b><br>Tgl Tera'+suf+': '+(item.tgl_tera||'-')+'<br>Tgl Exp Tera'+suf+': '+(item.expired_tera||'-')+'<br>'+labelTera(item.expired_tera, jenis)+'<br>Pencatat: '+(item.pencatat||'-')+'</div>';
+      isi += '<div class="aksi-bawah">';
+      if(bisaEdit){ isi += '<button class="tombol-edit" onclick="mulaiEdit('+item.id+')">Edit</button>'; }
+      if(bisaHapus){ isi += '<button class="tombol-hapus" onclick="hapusTera('+item.id+')">Hapus</button>'; }
+      isi += '</div></div>';
+    });
+    isi += '</div>';
+  }
+  document.getElementById(targetId).innerHTML = isi;
+}
+function lanjutTeraDariList(noSeri){
+  tampilMenu('input');
+  document.getElementById('noSeri').value = noSeri;
+  cariNoSeriOtomatis();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function muatTimbangan150(){ muatSatuTimbangan('150 kg','filterTahun150','cariSeri150','daftar150','Timbangan'); }
+function muatTimbangan15(){ muatSatuTimbangan('15 kg','filterTahun15','cariSeri15','daftar15','Timbangan'); }
+function muatRefractometer(){ muatSatuTimbangan('Refractometer','filterTahunRef','cariSeriRef','daftarRef','Refractometer'); }
+async function muatRekap(){
+  if(kategoriListAktif === 'Refractometer'){ return; }
+  const hasil = await klien.from('tera_timbangan').select('*').eq('jenis_timbangan', kategoriListAktif).gte('tahun_tera', TAHUN_AWAL).order('no_seri', {ascending:true});
+  if(hasil.error){ document.getElementById('daftarRekap').innerText = hasil.error.message; return; }
+  if(!hasil.data || hasil.data.length === 0){ document.getElementById('daftarRekap').innerText = 'Belum ada data ' + kategoriListAktif + ' mulai 2026.'; return; }
+  let hitung = {};
+  hasil.data.forEach(function(item){
+    const kunciHitung = item.jenis_timbangan + ' | ' + (item.no_seri||'-') + ' | ' + (item.merk_timbangan||'-');
+    if(!hitung[kunciHitung]) hitung[kunciHitung] = 0;
+    hitung[kunciHitung]++;
+  });
+  let isi = '';
+  for(const k in hitung){ const pisah = k.split(' | '); isi += '<div class="kartu-tera" style="margin-top:8px"><b>'+pisah[0]+'</b><br>No Seri: '+pisah[1]+'<br>Merk: '+pisah[2]+'<br>Jumlah Tera: '+hitung[k]+' kali<br><button class="tombol-lanjut" onclick="lanjutTeraDariList(\''+pisah[1]+'\')">Lanjutkan Tera No Seri '+pisah[1]+'</button></div>'; }
+  document.getElementById('daftarRekap').innerHTML = isi;
+}
+</script>
+</body>
+</html>
